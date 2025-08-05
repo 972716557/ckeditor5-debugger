@@ -182,6 +182,8 @@
     "url": "https://github.com/ckeditor/ckeditor5.git"
   },
   "scripts": {
+    "scripts": {
+    "watch": "nodemon --ignore dist/ --watch src/ -e ts,tsx,scss --exec \"npm run build && yalc push\"",
     "nice": "ckeditor5-dev-changelog-create-entry",
     "postinstall": "node ./scripts/postinstall.mjs",
     "lint": "eslint --format ./scripts/eslint-formatter.cjs",
