@@ -1,7 +1,19 @@
 ### 全局安装 yalc
 
 ```
-npm install -g yalc  或 yarn global add yalc
+npm install -g yalc
+```
+
+或
+
+```
+yarn global add yalc
+```
+
+### 全局安装 nodemon
+
+```
+npm install -g nodemon
 ```
 
 ### ckeidtor5 项目
@@ -26,7 +38,7 @@ yalc add ckeditor5 --link
 yalc update ckeditor5
 ```
 
-### 步骤 4：移除本地依赖
+### 移除本地依赖
 
 ```
 yalc remove ckeditor5 // 移除单个包

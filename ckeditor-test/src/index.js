@@ -42,6 +42,7 @@ import {
   ImageUpload,
   ClassicEditor,
 } from "ckeditor5";
+// import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import "ckeditor5/ckeditor5.css";
 
 ClassicEditor.create(document.querySelector("#editor"), {
