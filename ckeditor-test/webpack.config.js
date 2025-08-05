@@ -29,7 +29,6 @@ module.exports = {
         test: /.(js)|(jsx)$/,
         exclude: /node_modules/,
         use: "babel-loader",
-        include: /ckeditor5-master/,
         include: [
           path.resolve(__dirname, "src"), // 你的项目源码
           path.resolve(__dirname, "../ckeditor5-master"), // ckeditor5源码
@@ -37,7 +36,6 @@ module.exports = {
       },
       {
         test: /.css$/,
-        exclude: /node_modules/,
         use: ["style-loader", "css-loader"],
       },
     ],
@@ -47,20 +45,20 @@ module.exports = {
       template: "./src/index.html",
     }),
   ],
-  resolve: {
-    extensions: [".ts", ".js"], // 添加 .ts 扩展名
-    alias: {
-      // "@ckeditor": path.resolve(__dirname, "../ckeditor5-master/packages"),
-      "@ckeditor/ckeditor5-build-classic": path.resolve(
-        __dirname,
-        "../ckeditor5-master/packages/ckeditor5-editor-classic/src"
-      ),
-      // 通用 CKEditor 核心库路径
-      "@ckeditor/ckeditor5-[a-z/-]+$": path.resolve(
-        __dirname,
-        "../ckeditor5-master/packages"
-      ),
-    },
-  },
+  // resolve: {
+  //   extensions: [".ts", ".js"], // 添加 .ts 扩展名
+  //   alias: {
+  //     // "@ckeditor": path.resolve(__dirname, "../ckeditor5-master/packages"),
+  //     "@ckeditor/ckeditor5-build-classic": path.resolve(
+  //       __dirname,
+  //       "../ckeditor5-master/packages/ckeditor5-editor-classic/src"
+  //     ),
+  //     // 通用 CKEditor 核心库路径
+  //     "@ckeditor/ckeditor5-[a-z/-]+$": path.resolve(
+  //       __dirname,
+  //       "../ckeditor5-master/packages"
+  //     ),
+  //   },
+  // },
   devtool: "source-map", // 启用源码映射
 };

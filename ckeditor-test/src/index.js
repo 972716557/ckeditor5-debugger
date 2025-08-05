@@ -1,7 +1,8 @@
-import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+import { ClassicEditor, Heading, Bold, Italic, Link } from "ckeditor5";
+import "ckeditor5/ckeditor5.css"
 
 ClassicEditor.create(document.querySelector("#editor"), {
-  // plugins: [Heading, Bold, Italic, Link],
+  plugins: [Heading, Bold, Italic, Link],
   toolbar: ["heading", "|", "bold", "italic", "link"],
   licenseKey: "GPL",
 })
