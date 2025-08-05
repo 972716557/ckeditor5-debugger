@@ -3,7 +3,6 @@ const path = require("path");
 
 module.exports = {
   entry: "./src/index.js",
-  mode: "development",
   output: {
     filename: "bundle.js",
     path: path.resolve(__dirname, "dist"),
@@ -11,17 +10,30 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /.(ts)|(tsx)$/,
-        exclude: /node_modules/,
-        use: "ts-loader",
-        options: {
-          transpileOnly: true, // 只转译，不做类型检查（由插件负责）
-        },
+        test: /\.ts$/,
+        use: [
+          {
+            loader: "babel-loader",
+            options: {
+              presets: [
+                "@babel/preset-env",
+                "@babel/preset-typescript", // 添加 TypeScript 支持
+              ],
+            },
+          },
+          "ts-loader",
+        ],
+        include: path.resolve(__dirname, "../ckeditor5-master/packages"),
       },
       {
         test: /.(js)|(jsx)$/,
         exclude: /node_modules/,
         use: "babel-loader",
+        include: /ckeditor5-master/,
+        include: [
+          path.resolve(__dirname, "src"), // 你的项目源码
+          path.resolve(__dirname, "../ckeditor5-master"), // ckeditor5源码
+        ],
       },
       {
         test: /.css$/,
@@ -36,11 +48,17 @@ module.exports = {
     }),
   ],
   resolve: {
+    extensions: [".ts", ".js"], // 添加 .ts 扩展名
     alias: {
-      ckeditor5: path.resolve(__dirname, "../ckeditor5-master"),
+      // "@ckeditor": path.resolve(__dirname, "../ckeditor5-master/packages"),
       "@ckeditor/ckeditor5-build-classic": path.resolve(
         __dirname,
-        "../ckeditor5-master/packages/ckeditor5-editor-classic/src/index.js"
+        "../ckeditor5-master/packages/ckeditor5-editor-classic/src"
+      ),
+      // 通用 CKEditor 核心库路径
+      "@ckeditor/ckeditor5-[a-z/-]+$": path.resolve(
+        __dirname,
+        "../ckeditor5-master/packages"
       ),
     },
   },
