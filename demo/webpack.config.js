@@ -1,6 +1,12 @@
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const path = require("path");
+const {
+  CKEditorTranslationsPlugin,
+} = require("@ckeditor/ckeditor5-dev-translations");
+const { styles } = require("@ckeditor/ckeditor5-dev-utils");
 
+// 计算绝对路径（根据你的实际目录结构调整）
+const CKEDITOR_SRC = path.resolve(__dirname, "../ckeditor5/packages");
 module.exports = {
   entry: "./src/index.js",
   output: {
@@ -9,33 +15,50 @@ module.exports = {
   },
   module: {
     rules: [
+      // 1. 处理 CKEditor 5 SVG 图标
       {
-        test: /\.ts$/,
+        test: /ckeditor5-[^/\\]+[/\\]theme[/\\]icons[/\\][^/\\]+\.svg$/,
+        use: ["raw-loader"],
+      },
+
+      // 2. 处理 CKEditor 5 CSS 文件
+      {
+        test: /ckeditor5-[^/\\]+[/\\]theme[/\\].+\.css$/,
         use: [
           {
-            loader: "babel-loader",
-            options: {
-              presets: [
-                "@babel/preset-env",
-                "@babel/preset-typescript", // 添加 TypeScript 支持
-              ],
-            },
+            loader: "style-loader",
+            options: { injectType: "singletonStyleTag" },
           },
-          "ts-loader",
+          {
+            loader: "postcss-loader",
+            options: styles.getPostCssConfig({
+              themeImporter: {
+                themePath: require.resolve("@ckeditor/ckeditor5-theme-lark"),
+              },
+              minify: true,
+            }),
+          },
         ],
-        include: path.resolve(__dirname, "../ckeditor5-master/packages"),
       },
+
+      // 3. 处理 JS/TS 文件（转译 CKEditor 源码）
       {
-        test: /.(js)|(jsx)$/,
+        test: /\.(js|ts)$/,
         exclude: /node_modules/,
-        use: "babel-loader",
-        include: [
-          path.resolve(__dirname, "src"), // 你的项目源码
-          path.resolve(__dirname, "../ckeditor5-master"), // ckeditor5源码
-        ],
+        use: {
+          loader: "babel-loader",
+          options: {
+            presets: ["@babel/preset-env", "@babel/preset-typescript"],
+            plugins: [
+              // CKEditor 5 需要此插件
+              "@babel/plugin-transform-runtime",
+            ],
+          },
+        },
       },
       {
-        test: /.css$/,
+        test: /\.css$/,
+        exclude: /ckeditor5-[^/\\]+[/\\]theme[/\\].+\.css$/,
         use: ["style-loader", "css-loader"],
       },
     ],
@@ -44,21 +67,25 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: "./src/index.html",
     }),
+    // 处理 CKEditor 5 翻译
+    new CKEditorTranslationsPlugin({
+      language: "zh", // 设置中文
+      additionalLanguages: "all", // 包含所有语言
+    }),
   ],
-  // resolve: {
-  //   extensions: [".ts", ".js"], // 添加 .ts 扩展名
-  //   alias: {
-  //     // "@ckeditor": path.resolve(__dirname, "../ckeditor5-master/packages"),
-  //     "@ckeditor/ckeditor5-build-classic": path.resolve(
-  //       __dirname,
-  //       "../ckeditor5-master/packages/ckeditor5-editor-classic/src"
-  //     ),
-  //     // 通用 CKEditor 核心库路径
-  //     "@ckeditor/ckeditor5-[a-z/-]+$": path.resolve(
-  //       __dirname,
-  //       "../ckeditor5-master/packages"
-  //     ),
-  //   },
-  // },
+  resolve: {
+    // 关键配置：将 CKEditor 包指向本地源码
+    alias: {
+      // 映射所有 CKEditor 包
+      "@ckeditor/ckeditor5-(.+)": CKEDITOR_SRC + "/ckeditor5-$1/src",
+
+      // 特殊处理核心包
+      "@ckeditor/ckeditor5-core": CKEDITOR_SRC + "/ckeditor5-core/src",
+      "@ckeditor/ckeditor5-engine": CKEDITOR_SRC + "/ckeditor5-engine/src",
+
+      // 添加其他需要直接引用的包...
+    },
+    extensions: [".ts", ".js", ".json"], // 支持 TypeScript
+  },
   devtool: "source-map", // 启用源码映射
 };
