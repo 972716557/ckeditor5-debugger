@@ -4,9 +4,11 @@ const {
   CKEditorTranslationsPlugin,
 } = require("@ckeditor/ckeditor5-dev-translations");
 const { styles } = require("@ckeditor/ckeditor5-dev-utils");
+// 在 webpack.config.js 中添加
 
 // 计算绝对路径（根据你的实际目录结构调整）
-const CKEDITOR_SRC = path.resolve(__dirname, "../ckeditor5/packages");
+const CKEDITOR_SRC = path.resolve(__dirname, "../ckeditor5/packages"); // /Users/yuchen/Desktop/ckeditor/ckeditor5/packages
+
 module.exports = {
   entry: "./src/index.js",
   output: {
@@ -33,7 +35,7 @@ module.exports = {
             loader: "postcss-loader",
             options: styles.getPostCssConfig({
               themeImporter: {
-                themePath: require.resolve("@ckeditor/ckeditor5-theme-lark"),
+                // themePath: require.resolve("@ckeditor/ckeditor5-theme-lark"),
               },
               minify: true,
             }),
@@ -77,13 +79,11 @@ module.exports = {
     // 关键配置：将 CKEditor 包指向本地源码
     alias: {
       // 映射所有 CKEditor 包
-      "@ckeditor/ckeditor5-(.+)": CKEDITOR_SRC + "/ckeditor5-$1/src",
-
-      // 特殊处理核心包
-      "@ckeditor/ckeditor5-core": CKEDITOR_SRC + "/ckeditor5-core/src",
-      "@ckeditor/ckeditor5-engine": CKEDITOR_SRC + "/ckeditor5-engine/src",
-
-      // 添加其他需要直接引用的包...
+      "@ckeditor/ckeditor5-*": path.resolve(
+        CKEDITOR_SRC,
+        "ckeditor5-*/src" // 注意：这里移除了开头的斜线 "/"
+      ),
+      ckeditor5: path.resolve(__dirname, "../ckeditor5/src"),
     },
     extensions: [".ts", ".js", ".json"], // 支持 TypeScript
   },
